@@ -50,6 +50,20 @@
   </style>
 </head>
 <body>
+<div id="root"></div>
+<script>
+  window.onload = function() {
+    var options = {
+      whatsapp: "9599863263",
+      call_to_action: "Chat with us",
+      position: "right",
+    };
+    var proto = document.location.protocol, host = "getbutton.io", url = proto + "//static." + host;
+    var s = document.createElement("script"); s.type = "text/javascript"; s.async = true;
+    s.src = url + "/widget-send-button/js/init.js";
+    s.onload = function () { WhWidgetSendButton.init(host, proto, options); };
+    var x = document.getElementsByTagName("script")[0]; x.parentNode.insertBefore(s, x);
+  };
 
   <!--<div class="login-box">
     <h2>Blog Editor Login</h2>
@@ -98,7 +112,7 @@
   </script>
 
   <!-- Firebase JS SDKs -->
-  <!--<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+ <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>-->
 
   <script>
