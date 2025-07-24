@@ -132,7 +132,7 @@ const App = () => {
         <h2>Contact Us</h2>
         <p>We typically reply within 2–6 hours. Ask us anything about growing your fitness business.</p>
         <div style={{ margin: "2rem auto", maxWidth: "600px" }}>
-          <iframe src="https://share.hsforms.com/1eSiQFq4URk6iNa9KyZNTcQe6knp" width="100%" height="800" frameBorder="0" title="CRM Form" />
+          <iframe src="https://40uu66.share-na2.hsforms.com/2iH1L5O5IQ8qqtEUNnOG_tw" width="100%" height="800" frameBorder="0" title="CRM Form" />
         </div>
       </section>
 
