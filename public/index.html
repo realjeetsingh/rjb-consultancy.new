@@ -1,22 +1,142 @@
 <!DOCTYPE html>
 <html lang="en">
-<head><meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>RJR Consultancy</title></head>
-<body><div id="root"></div>
-<script>
-  window.onload = function() {
-    var options = {
-      whatsapp: "9599863263",
-      call_to_action: "Chat with us",
-      position: "right",
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Blog Editor - RJR Consultancy</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      background: #f7f7f7;
+      padding: 2rem;
+    }
+    .editor-box {
+      background: #fff;
+      max-width: 600px;
+      margin: 2rem auto;
+      padding: 2rem;
+      border-radius: 10px;
+      box-shadow: 0 2px 8px #0002;
+    }
+    input, textarea {
+      display: block;
+      width: 100%;
+      margin-top: 1rem;
+      font-size: 1rem;
+      padding: .5rem;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      resize: vertical;
+    }
+    button {
+      margin-top: 1.5rem;
+      padding: 0.75rem 1.5rem;
+      background: #007bff;
+      color: #fff;
+      border: none;
+      border-radius: 5px;
+      font-size: 1rem;
+      cursor: pointer;
+    }
+    button:hover {
+      background: #0056b3;
+    }
+    .status {
+      margin-top: 1rem;
+      font-weight: bold;
+    }
+    .sign-out {
+      float: right;
+      background: #dc3545;
+    }
+    .sign-out:hover {
+      background: #a91c2e;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="editor-box">
+    <button id="sign-out" class="sign-out">Sign Out</button>
+    <h2>Blog Editor</h2>
+    <form id="blog-form">
+      <label>
+        Title:
+        <input type="text" id="title" required maxlength="100" />
+      </label>
+      <label>
+        Content:
+        <textarea id="content" rows="10" required maxlength="5000"></textarea>
+      </label>
+      <button type="submit">Publish Post</button>
+      <div id="status" class="status"></div>
+    </form>
+  </div>
+
+  <!-- Firebase JS SDKs -->
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+
+  <script>
+    // TODO: Replace with your actual Firebase config
+    const firebaseConfig = {
+      apiKey: "YOUR_API_KEY",
+      authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
+      projectId: "YOUR_PROJECT_ID",
+      // ...other Firebase config settings
     };
-    var proto = document.location.protocol, host = "getbutton.io", url = proto + "//static." + host;
-    var s = document.createElement("script"); s.type = "text/javascript"; s.async = true;
-    s.src = url + "/widget-send-button/js/init.js";
-    s.onload = function () { WhWidgetSendButton.init(host, proto, options); };
-    var x = document.getElementsByTagName("script")[0]; x.parentNode.insertBefore(s, x);
-  };
-</script>
+
+    firebase.initializeApp(firebaseConfig);
+
+    const auth = firebase.auth();
+    const db = firebase.firestore();
+
+    // Auth guard
+    auth.onAuthStateChanged(user => {
+      if (!user) {
+        window.location.href = "login.html"; // change as needed (or index.html)
+      }
+    });
+
+    // Sign out
+    document.getElementById('sign-out').onclick = function() {
+      auth.signOut();
+    };
+
+    // Blog form
+    const blogForm = document.getElementById('blog-form');
+    const statusDiv = document.getElementById('status');
+
+    blogForm.onsubmit = async function(e) {
+      e.preventDefault();
+      statusDiv.textContent = "";
+      const user = auth.currentUser;
+      if (!user) {
+        statusDiv.textContent = "Session expired. Please log in again.";
+        setTimeout(() => window.location.href = "login.html", 1500);
+        return;
+      }
+      const title = document.getElementById('title').value.trim();
+      const content = document.getElementById('content').value.trim();
+      if (!title || !content) {
+        statusDiv.textContent = "Title and content are required.";
+        return;
+      }
+      try {
+        await db.collection("blogs").add({
+          title: title,
+          content: content,
+          author: user.email,
+          createdAt: firebase.firestore.FieldValue.serverTimestamp()
+        });
+        statusDiv.textContent = "Blog post published!";
+        blogForm.reset();
+      } catch (err) {
+        statusDiv.textContent = "Error: " + err.message;
+      }
+    };
+  </script>
 
 </body>
 </html>
